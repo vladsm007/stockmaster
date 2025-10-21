@@ -1,0 +1,112 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  OPERATOR
+}
+
+enum MovementType {
+  IN
+  OUT
+  ADJUSTMENT
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(50)
+  email     String   @unique
+  password  String   @db.VarChar(100)
+  role      Role     @default(OPERATOR)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+  
+  stock_movements stock_movement[]
+  
+  @@map("users")
+}
+
+model Category {
+  id          Int        @id @default(autoincrement())
+  name        String     @db.VarChar(20) @unique
+  description String     @db.VarChar(255)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  deletedAt   DateTime?
+  products    Product[]
+  
+  @@map("categories")
+}
+
+model Supplier {
+  id          Int        @id @default(autoincrement())
+  name        String     @db.VarChar(30)
+  contactName String     @db.VarChar(20) @map("contact_name")
+  email       String     @unique
+  phone       String
+  address     String
+  city        String
+  state       String
+  zipCode     String     @map("zip_code")
+  active      Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  deletedAt   DateTime?
+  products    Product[]
+  
+  @@map("suppliers")
+}
+
+model Product {
+  id           Int       @id @default(autoincrement())
+  name         String    @db.VarChar(30)
+  description  String
+  sku          String    @unique
+  barcode      BigInt?   @unique
+  currentStock Int       @default(0) @map("current_stock")
+  unitPrice    Decimal   @db.Decimal(10, 2) @map("unit_price")
+  categoryId   Int
+  category     Category  @relation(fields: [categoryId], references: [id])
+  supplierId   Int
+  supplier     Supplier  @relation(fields: [supplierId], references: [id])
+  imageUrl     String?   @map("image_url")
+  active       Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
+  
+  stock_movements stock_movement[]
+  
+  @@map("products")
+  @@index([categoryId])
+  @@index([supplierId])
+  @@index([active])
+}
+
+model stock_movement {
+  id              Int           @id @default(autoincrement())
+  productId       Int           @map("product_id")
+  type            MovementType
+  product         Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  quantity        Int
+  unitPrice       Decimal       @db.Decimal(10, 2) @map("unit_price")
+  totalPrice      Decimal       @db.Decimal(10, 2) @map("total_price")
+  reason          String?
+  referenceNumber String?       @map("reference_number")
+  userId          Int?
+  user            User?         @relation(fields: [userId], references: [id])
+  createdAt       DateTime      @default(now())
+  
+  @@map("stock_movements")
+  @@index([productId])
+  @@index([createdAt])
+  @@index([type])
+}
