@@ -18,17 +18,17 @@ const limiter = rateLimit({
 app.use(cors())
 app.use(helmet())
 app.use(express.json())
-app.use(limiter) // ✅ CORREÇÃO: Use a instância limiter como middleware global
+app.use(limiter)
 
 // Health check
-app.get('/health', (req, res) => { // ✅ REMOVIDO: .use(rateLimit) incorreto
+app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date() });
 });
 
 // Routes
-app.use('/api/v1/users', userRoutes) // ✅ REMOVIDO: .use(rateLimit) incorreto
+app.use('/api/v1/users', userRoutes)
 
-// Error handler - CORREÇÃO: "nest" para "next"
+// Error handler
 app.use((err, req, res, next) => {
     console.error(err.stack)
     res.status(err.status || 500).json({
