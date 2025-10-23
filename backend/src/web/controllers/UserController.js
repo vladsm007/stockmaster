@@ -137,7 +137,7 @@ const deleteUser = async (req, res) => {
       }
     })
 
-    console.log('✅ Usuário marcado como deletado')
+    console.log('✅ Usuário deletado')
     res.status(204).send()
 
   } catch (error) {

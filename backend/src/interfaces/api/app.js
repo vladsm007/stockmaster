@@ -4,6 +4,8 @@ const helmet = require('helmet')
 const rateLimit = require('express-rate-limit')
 
 const userRoutes = require('../../web/routes/UserRoutes.js')
+const categoryRoutes = require('../../web/routes/CategoryRoutes.js')
+
 const app = express()
 
 const limiter = rateLimit({
@@ -27,6 +29,7 @@ app.get('/health', (req, res) => {
 
 // Routes
 app.use('/api/v1/users', userRoutes)
+app.use('/api/v1/categories', categoryRoutes)
 
 // Error handler
 app.use((err, req, res, next) => {

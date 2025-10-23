@@ -51,11 +51,11 @@ model Supplier {
   name        String     @db.VarChar(30)
   contactName String     @db.VarChar(20) @map("contact_name")
   email       String     @unique
-  phone       String
-  address     String
-  city        String
-  state       String
-  zipCode     String     @map("zip_code")
+  phone       String?
+  address     String?
+  city        String?
+  state       String?
+  zipCode     String?    @map("zip_code")
   active      Boolean    @default(true)
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
