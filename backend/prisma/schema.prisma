@@ -70,7 +70,7 @@ model Product {
   name         String    @db.VarChar(30)
   description  String
   sku          String    @unique
-  barcode      BigInt?   @unique
+  barcode      Int?      @unique
   currentStock Int       @default(0) @map("current_stock")
   unitPrice    Decimal   @db.Decimal(10, 2) @map("unit_price")
   categoryId   Int

@@ -14,7 +14,7 @@ const createUser = async (req, res) => {
         name,
         email,
         password,
-        role: role || 'OPERATOR' // role não é obrigatório no schema
+        role: role || 'OPERATOR'
       }
     })
 

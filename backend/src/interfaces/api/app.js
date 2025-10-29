@@ -2,9 +2,12 @@ const express = require('express')
 const cors = require('cors')
 const helmet = require('helmet')
 const rateLimit = require('express-rate-limit')
+const bigIntMiddleware = require('../../web/middleware/BigInt.js')
 
 const userRoutes = require('../../web/routes/UserRoutes.js')
 const categoryRoutes = require('../../web/routes/CategoryRoutes.js')
+const supplierRoutes = require('../../web/routes/SupplierRoutes.js')
+const productRoutes = require('../../web/routes/ProductRouter.js')
 
 const app = express()
 
@@ -21,6 +24,7 @@ app.use(cors())
 app.use(helmet())
 app.use(express.json())
 app.use(limiter)
+app.use(bigIntMiddleware)
 
 // Health check
 app.get('/health', (req, res) => {
@@ -30,6 +34,8 @@ app.get('/health', (req, res) => {
 // Routes
 app.use('/api/v1/users', userRoutes)
 app.use('/api/v1/categories', categoryRoutes)
+app.use('/api/v1/suppliers', supplierRoutes)
+app.use('/api/v1/products', productRoutes)
 
 // Error handler
 app.use((err, req, res, next) => {
