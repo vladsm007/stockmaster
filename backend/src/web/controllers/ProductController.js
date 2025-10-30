@@ -1,5 +1,23 @@
 const prisma = require('../../infrastructure/database/database.js')
 
+
+// Função para formatar produtos convertendo campos Decimal
+function formatProduct(product) {
+  if (!product) return product;
+  
+  return {
+    ...product,
+    unitPrice: product.unitPrice ? Number(product.unitPrice) : null,
+    // Se houver outros campos decimal, adicione aqui também
+    // exemplo: discount: product.discount ? Number(product.discount) : null
+  };
+}
+
+// Função para formatar array de produtos
+function formatProducts(products) {
+  return products.map(product => formatProduct(product));
+}
+
 // Criando produto
 const createProduct = async (req, res) => {
   try {
@@ -38,7 +56,7 @@ const createProduct = async (req, res) => {
     })
 
     console.log('✅ Produto cadastrado com sucesso:', product.id)
-    res.status(201).json(product)
+    res.status(201).json(formatProduct(product))
 
   } catch (error) {
     console.error('❌ Erro ao criar produto:', error)
@@ -69,7 +87,7 @@ const getAllProducts = async (req, res) => {
     })
 
     console.log(`✅ ${products.length} produtos encontrados.`)
-    res.json(products)
+    res.json(formatProducts(products))
 
   } catch (error) {
     console.error('❌ Erro ao buscar produtos:', error)

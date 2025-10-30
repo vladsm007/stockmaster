@@ -1,4 +1,3 @@
-
 require('dotenv').config()
 const app = require('./interfaces/api/app.js')
 const PORT = process.env.PORT || 3001
