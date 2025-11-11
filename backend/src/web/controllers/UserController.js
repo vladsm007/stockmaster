@@ -1,4 +1,6 @@
 const prisma = require('../../infrastructure/database/database.js')
+const { PrismaCliente } = require('@prisma/client')
+const { hashPassword} = require('../../infrastructure/auth/PasswordAuth.js')
 
 // Criando o usuario
 const createUser = async (req, res) => {
@@ -9,17 +11,23 @@ const createUser = async (req, res) => {
       return res.status(400).json({ error: 'Nome, email e senha são obrigatórios.' })
     }
 
+    // Criar hash da senha
+    const hashedPassword = await hashPassword(password);
+
     const user = await prisma.user.create({
       data: {
         name,
         email,
-        password,
+        password: hashedPassword,
         role: role || 'OPERATOR'
       }
     })
+    
+    // Remover senha do retorno
+    const { password: _, ...userWithoutPassword } = user;
 
     console.log('✅ Usuário cadastrado com sucesso:', user.id)
-    res.status(201).json(user)
+    res.status(201).json(userWithoutPassword)
 
   } catch (error) {
     console.error('❌ Erro ao criar usuário:', error)
